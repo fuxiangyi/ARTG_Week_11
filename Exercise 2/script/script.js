@@ -34,10 +34,34 @@ queue()
     .defer(d3.tsv, "data/unemployment.tsv", parseData)
 	.await(function(err, counties, states){
 
+
 		draw(counties, states);
 	})
 
 function draw(counties, states){
+    svg.selectAll('.county')
+        .data(counties.features)
+        .enter()
+        .append('path')
+        .attr('class','county')
+        .attr('d',path)
+        .style('fill',function(d){
+            var id = d.properties.STATE + d.properties.COUNTY;
+
+            if( rateById.get(id) == undefined ){
+                console.log(d.properties.STATE);
+                return 'none';
+            };
+
+            var unemployment = rateById.get(id);
+            return colorScale(unemployment);
+
+        });
+
+    svg.append('path')
+        .datum(states)
+        .attr('class','state')
+        .attr('d',path);
 
 }
 

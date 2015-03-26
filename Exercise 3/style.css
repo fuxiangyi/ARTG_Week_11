@@ -45,6 +45,7 @@ h2{
 .custom-tooltip{
 	padding: 8px;
 	background: rgb(50,50,50);
+    width:200px;
 	position: absolute;
 	visibility:hidden;
 }

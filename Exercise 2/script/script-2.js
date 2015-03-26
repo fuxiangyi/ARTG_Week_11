@@ -19,13 +19,16 @@ var rateById = d3.map();
 
 var scaleColor = d3.scale.linear().domain([0,0.15]).range(["#fff","red"]);
 
+var formatNumber = d3.format('05');
+
 //import data
 queue()
 	.defer(d3.json, "data/gz_2010_us_050_00_5m.json")
 	.defer(d3.json, "data/gz_2010_us_040_00_5m.json")
     .defer(d3.tsv, "data/unemployment.tsv", parseData)
 	.await(function(err, counties, states){
-
+        console.error(err);
+        console.log(counties);
 		draw(counties, states);
 	})
 

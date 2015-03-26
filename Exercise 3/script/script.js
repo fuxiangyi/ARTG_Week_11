@@ -19,6 +19,10 @@ var rateById = d3.map();
 
 var scaleColor = d3.scale.linear().domain([0,0.15]).range(["#fff","red"]);
 
+//pre-select .custom-tooltip
+var customTooltip = d3.select('.custom-tooltip');
+var canvasDiv = d3.select('.canvas').node();
+
 //import data
 queue()
 	.defer(d3.json, "data/gz_2010_us_050_00_5m.json")
@@ -32,7 +36,13 @@ queue()
 function draw(counties, states){
 	console.log(counties.features);
 
-	svg.selectAll('.county')
+    svg.append('path')
+        .attr('class','state')
+        .datum(states)
+        .attr('d',path);
+
+
+    svg.selectAll('.county')
 		.data(counties.features)
 		.enter()
 		.append('path')
@@ -50,10 +60,6 @@ function draw(counties, states){
         .on('mouseleave', onMouseLeave);
         //on hover?
 
-	svg.append('path')
-		.attr('class','state')
-		.datum(states)
-		.attr('d',path);
 
 }
 
@@ -62,9 +68,32 @@ function parseData(d){
 }
 
 function onMouseEnter(d){
-	
+	//we need to show the tooltip
+    customTooltip
+        .style('visibility','visible');
+
+    //find out where on the screen the tooltip needs to go
+    var xy = d3.mouse(canvasDiv); //this returns mouse location in relation to .canvas
+    customTooltip
+        .style('left', (xy[0]+10)+'px')
+        .style('top', (xy[1]+10)+'px');
+
+    //inject data into the content of the tooltip
+
+    var id = (+d.properties.STATE) + d.properties.COUNTY,
+        rate = rateById.get(id);
+
+    customTooltip
+        .select('h2')
+        .html(d.properties.NAME);
+    customTooltip
+        .select('span')
+        .html(rate);
 }
 
 function onMouseLeave(d){
+    //hide the tooltip
+    customTooltip
+        .style('visibility','hidden');
 
 }
